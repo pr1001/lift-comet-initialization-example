@@ -17,6 +17,8 @@ import net.liftweb.widgets.flot._
 import net.liftweb.http.js.JsCmds.Noop
 import net.liftweb.http.js.JE._
 
+import scala.xml.Text
+
 class Test extends CometActor{
   private var message: Box[String] = Empty
   val options = new FlotOptions() {
@@ -45,7 +47,11 @@ class Test extends CometActor{
 
   def render = {
     println("Render called")
-    bind("flot", "graph" -> Flot.render("ph_graph", series, options, Noop))
+    bind("flot", "graph" -> 
+	 (
+	   message.map(m => Flot.render("ph_graph", series, options, Noop)) openOr
+	   Text("Working")
+	 ))
   }
 
   override def highPriority = {
@@ -56,3 +62,5 @@ class Test extends CometActor{
     }
   }
 }
+
+case class Setup(msg: String)
